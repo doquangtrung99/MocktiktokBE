@@ -3,14 +3,13 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const Message = new Schema({
-    message: {
-        content: { type: String },
-        inRoom: { type: Array },
-        // sender: {
-        //     type: Schema.Types.ObjectId,
-        //     ref: 'Account'
-        // }
-    },
+    message: { type: String },
+    inRoom: { type: Array },
+    sender: {
+        type: Number
+        // type: Schema.Types.ObjectId,
+        // ref: 'Account'
+    }
 },
     {
         timestamps: true
