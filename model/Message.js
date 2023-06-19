@@ -6,9 +6,8 @@ const Message = new Schema({
     message: { type: String },
     inRoom: { type: Array },
     sender: {
-        type: Number
-        // type: Schema.Types.ObjectId,
-        // ref: 'Account'
+        type: Schema.Types.ObjectId,
+        ref: 'Account'
     }
 },
     {

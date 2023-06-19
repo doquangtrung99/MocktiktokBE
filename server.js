@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import accountRouter from './api/account.js';
 import messageRouter from './api/message.js'
+import videoRouter from './api/videos.js'
 import cors from 'cors'
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 app.use('/accounts', accountRouter);
 app.use('/messages', messageRouter);
+app.use('/videos', videoRouter);
 
 (async () => {
     try {

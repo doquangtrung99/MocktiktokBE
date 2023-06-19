@@ -30,7 +30,7 @@ class Message {
             const { from, to } = req.query
             const response = await MessageModel.find({
                 inRoom: {
-                    $all: [parseInt(from), parseInt(to)]
+                    $all: [from, to]
                 }
             })
 

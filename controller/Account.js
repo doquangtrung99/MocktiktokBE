@@ -234,7 +234,9 @@ class Account {
 
     async Like(req, res, next) {
 
-        const [video, user] = await Promise.all([Video.findById(req.body.likedUser), Accounts.findById(req.body.userLike)])
+        console.log('run')
+        // userId sở hữu video  và user hiện tại mà like video
+        const [video, user] = await Promise.all([Video.findById(req.body.likedVideoId), Accounts.findById(req.body.userLikeId)])
 
         if (user.videoliked.includes(video._id)) {
             await user.updateOne({ $pull: { videoliked: video._id } })
@@ -242,10 +244,10 @@ class Account {
             await user.updateOne({ $push: { videoliked: video._id } })
         }
 
-        if (video.like.includes(req.body.userLike)) {
-            await video.updateOne({ $pull: { like: req.body.userLike } })
+        if (video.like.includes(req.body.userLikeId)) {
+            await video.updateOne({ $pull: { like: req.body.userLikeId } })
         } else {
-            await video.updateOne({ $push: { like: req.body.userLike } })
+            await video.updateOne({ $push: { like: req.body.userLikeId } })
         }
 
         res.status(200).json(video)
@@ -291,7 +293,7 @@ class Account {
 
         const comment = {
             content: req.body.comment,
-            user: req.body.userId
+            userId: req.body.userId
         }
 
         const [newComment, video] = await Promise.all([Comment.create(comment), Video.findById(req.body.videoId)])
