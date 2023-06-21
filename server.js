@@ -40,18 +40,39 @@ const socketio = new Server(server, {
     }
 });
 
+global.onlineUsers = {}
+
 socketio.on('connection', socket => {
     console.log('A user connected');
+
+    socket.join('public')
+
+    socket.on('add-user', (userId) => {
+        onlineUsers[socket.id] = {
+            id: userId,
+            online: true,
+            offline: 0,
+        }
+        socketio.in('public').emit('user-connected', onlineUsers)
+    });
 
     socket.on('join-room', room => {
         socket.join(room);
     });
 
-    socket.on('chat_message', data => {
-        socket.to(data.to).emit('chat_message', data);
+    socket.on('send-message', (room, data) => {
+        socket.broadcast.to(room).emit('message-receive', data);
     });
 
     socket.on('disconnect', () => {
+
+        onlineUsers[socket.id] = {
+            ...onlineUsers[socket.id],
+            online: false,
+            offline: Date.now(),
+        }
+
+        socketio.in('public').emit('user-connected', onlineUsers)
         console.log('A user disconnected');
     });
 });

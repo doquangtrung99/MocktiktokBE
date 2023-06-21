@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken'
 class Account {
     //[Get] 10 user [path]: /accounts
     Get(req, res, next) {
-        Accounts.find().limit(10)
+        Accounts.find({ role: { $ne: 'admin' } })
             .then(content => {
                 res.status(200).json(content)
             })
@@ -203,7 +203,7 @@ class Account {
             .catch(next)
     }
 
-    // Authorize user [path]: /authorize
+    // Authorize user [path]: /validatetoken
 
     Authorize(req, res, next) {
 

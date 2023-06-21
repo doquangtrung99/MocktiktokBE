@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const Account = new Schema({
-    avatar: { type: String },
+    avatarUrl: { type: String },
     nickname: { type: String },
     fullname: { type: String },
     username: { type: String },
