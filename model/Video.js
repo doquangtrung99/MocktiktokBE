@@ -3,11 +3,10 @@ const Schema = mongoose.Schema;
 
 const Video = new Schema({
     tick: { type: Boolean },
-    nickname: { type: String },
-    fullname: { type: String },
     videoUrl: { type: String },
     videoTitle: { type: String },
     videoHastag: { type: String },
+    ownerVideo: { type: Schema.Types.ObjectId, ref: 'Account' },
     like: [{ type: Schema.Types.ObjectId, ref: 'Account' }],
     comment: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 },

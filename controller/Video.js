@@ -1,12 +1,10 @@
 import Videos from '../model/Video.js'
 import Account from '../model/Account.js'
-
 class Video {
 
     Get(req, res, next) {
-        Videos.find({})
-            .populate({ path: 'nickname', select: 'nickname -_id' })
-            .populate({ path: 'fullname', select: 'fullname -_id' })
+        Videos.find()
+            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
             .populate({ path: 'comment' })
             .then(content => res.status(200).json(content))
             .catch(next)
@@ -16,9 +14,11 @@ class Video {
 
         const videoId = req.params.videoId
 
-        Videos.findOne({ _id: videoId }).populate({
-            path: 'comment'
-        }).then(response => res.status(200).json(response)).catch(err => console.log(err))
+        Videos.findOne({ _id: videoId })
+            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
+            .populate({
+                path: 'comment'
+            }).then(response => res.status(200).json(response)).catch(err => console.log(err))
 
 
     }
@@ -27,10 +27,14 @@ class Video {
         const { userId, ...others } = req.body
 
         const user = await Account.findById({ _id: userId })
-
+        // {
+        //     id: user._id,
+        //     nickname: user.nickname,
+        //     fullname: user.fullname,
+        //     avatarUrl: user.avatarUrl
+        // }
         const video = await Videos.create({
-            nickname: user.nickname,
-            fullname: user.fullname,
+            ownerVideo: user._id,
             ...others,
         })
 
