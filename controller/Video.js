@@ -27,12 +27,7 @@ class Video {
         const { userId, ...others } = req.body
 
         const user = await Account.findById({ _id: userId })
-        // {
-        //     id: user._id,
-        //     nickname: user.nickname,
-        //     fullname: user.fullname,
-        //     avatarUrl: user.avatarUrl
-        // }
+
         const video = await Videos.create({
             ownerVideo: user._id,
             ...others,

@@ -277,11 +277,14 @@ class Account {
 
         const user = await Accounts.findById({ _id: req.params.id })
 
-        user.nickname = req.body.nickname
-        user.fullname = req.body.fullname
-        user.bio = req.body.bio
-        user.avatar = req.body.avatar
-        user.save()
+        const fieldUser = {
+            ...user.toObject(),
+            ...req.body
+        }
+
+        await Accounts.updateOne({ _id: req.params.id }, { $set: fieldUser });
+
+        await user.save()
 
         res.status(200).json({
             statusMessage: 'Success'
