@@ -44,10 +44,19 @@ global.onlineUsers = {}
 
 socketio.on('connection', socket => {
     console.log('A user connected');
+    console.log('id1', socket.id)
 
     socket.join('public')
 
     socket.on('add-user', (userId) => {
+
+        for (let [key, value] of Object.entries(onlineUsers)) {
+            if (value.id == userId) {
+                delete onlineUsers[key]
+                break
+            }
+        }
+
         onlineUsers[socket.id] = {
             id: userId,
             online: true,
@@ -65,12 +74,13 @@ socketio.on('connection', socket => {
     });
 
     socket.on('disconnect', () => {
-
+        console.log('id2', socket.id, onlineUsers)
         onlineUsers[socket.id] = {
             ...onlineUsers[socket.id],
             online: false,
             offline: Date.now(),
         }
+        console.log('id3', onlineUsers)
 
         socketio.in('public').emit('user-connected', onlineUsers)
         console.log('A user disconnected');

@@ -137,10 +137,12 @@ class Account {
                 .select('-password')
                 .populate({
                     path: 'myVideo',
-                    select: 'like video',
                 })
                 .populate({
                     path: 'videoliked'
+                })
+                .populate({
+                    path: 'following', select: '_id fullname avatarUrl nickname'
                 })
                 .then(content => {
                     res.status(200).json(content)
