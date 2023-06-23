@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('/search/:q', AccountController.Search)
 router.get('/searchuser/:id', AccountController.GetUser)
+router.get('/refreshToken', AccountController.RefreshToken)
 router.get('/validatetoken', AccountController.Authorize)
 router.get('/commentreply/:commentId', AccountController.GetCommentReply)
 router.get('/', AccountController.Get)

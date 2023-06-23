@@ -3,6 +3,7 @@ import Video from '../model/Video.js'
 import Comment from '../model/Comment.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { generateAccessToken, generateRefreshToken } from '../services/user.js'
 
 class Account {
     //[Get] 10 user [path]: /accounts
@@ -150,6 +151,29 @@ class Account {
                 .catch(error => console.log(error))
         }
     }
+
+
+    RefreshToken(req, res, next) {
+
+        const refreshToken = req.headers.authorization.split(' ')[1]
+
+        jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, decoded) => {
+            if (err) {
+                return res.status(401).json({
+                    status: 'User was not authenticated',
+                    error: err
+                })
+            }
+
+            const token = generateAccessToken(decoded.id, decoded.role, refreshToken)
+            const user = await Accounts.findById(decoded.id).select('-password -__v -createdAt -updatedAt')
+
+            return res.status(200).json({
+                accessToken: token,
+                user
+            })
+        })
+    }
     //[POST] login user [path]: /login
 
     async Login(req, res, next) {
@@ -159,9 +183,8 @@ class Account {
                 const hasPassword = await bcrypt.compare(req.body.password, hasUsername.password)
                 if (hasPassword) {
                     const { password, ...others } = hasUsername.toObject()
-
-                    const token = jwt.sign({ id: hasUsername._id, role: hasUsername.role },
-                        process.env.JWT_SECRET, { expiresIn: '1d' })
+                    const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role)
+                    const token = generateAccessToken(hasUsername._id, hasUsername.role, refreshToken)
                     res.status(200).json({ ...others, token, status: 'success' })
                 } else {
                     res.status(200).json({
@@ -208,17 +231,18 @@ class Account {
     // Authorize user [path]: /validatetoken
 
     Authorize(req, res, next) {
-
         const token = req.headers.authorization.split(' ')[1]
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET, async (err, decoded) => {
             if (err) {
-                res.status(401).json({
+                return res.status(401).json({
                     status: 'Unauthorized',
                     error: err
                 })
             }
 
-            res.status(200).json(decoded)
+            const user = await Accounts.findById(decoded.id).select('-password -__v -createdAt -updatedAt')
+
+            return res.status(200).json(user)
         })
     }
 
