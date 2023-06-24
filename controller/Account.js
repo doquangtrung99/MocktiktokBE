@@ -365,7 +365,6 @@ class Account {
             content: replyComment,
             user: userId
         }
-
         const [newReplyComment, currentComment] = await Promise.all([Comment.create(comment), Comment.findById(commentId)])
 
         currentComment.reply.push(newReplyComment._id)
