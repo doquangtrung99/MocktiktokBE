@@ -5,7 +5,9 @@ class Video {
     Get(req, res, next) {
         Videos.find()
             .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
-            .populate({ path: 'comment' })
+            .populate({
+                path: 'comment'
+            })
             .then(content => res.status(200).json(content))
             .catch(next)
     }
@@ -34,7 +36,11 @@ class Video {
         Videos.findOne({ _id: videoId })
             .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
             .populate({
-                path: 'comment'
+                path: 'comment',
+                populate: {
+                    path: 'user',
+                    select: '-password'
+                }
             }).then(response => res.status(200).json(response)).catch(err => console.log(err))
 
 

@@ -324,7 +324,7 @@ class Account {
 
         const comment = {
             content: req.body.comment,
-            userId: req.body.userId
+            user: req.body.userId
         }
 
         const [newComment, video] = await Promise.all([Comment.create(comment), Video.findById(req.body.videoId)])
