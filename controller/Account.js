@@ -143,7 +143,10 @@ class Account {
                     path: 'videoliked'
                 })
                 .populate({
-                    path: 'following', select: '_id fullname avatarUrl nickname'
+                    path: 'following', select: '_id fullname avatarUrl nickname myVideo',
+                    populate: {
+                        path: 'myVideo'
+                    }
                 })
                 .then(content => {
                     res.status(200).json(content)
@@ -260,7 +263,6 @@ class Account {
 
     async Like(req, res, next) {
 
-        console.log('run')
         // userId sở hữu video  và user hiện tại mà like video
         const [video, user] = await Promise.all([Video.findById(req.body.likedVideoId), Accounts.findById(req.body.userLikeId)])
 

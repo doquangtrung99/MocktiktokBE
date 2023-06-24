@@ -10,6 +10,23 @@ class Video {
             .catch(next)
     }
 
+    async GetVideoOfUserFollowing(req, res, next) {
+
+        const id = req.params.userId
+
+        const user = await Account.findById(id)
+            .select('following')
+            .populate({
+                path: 'following', select: 'myVideo',
+                populate: {
+                    path: 'myVideo',
+                    select: '-createdAt -updatedAt -__v'
+                }
+            })
+
+        res.json(user.following)
+    }
+
     async GetVideoById(req, res) {
 
         const videoId = req.params.videoId
