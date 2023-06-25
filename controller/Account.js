@@ -94,7 +94,7 @@ class Account {
 
             const page = req.query.page
             const limit = req.query.limit
-            const totalDocs = await Accounts.countDocuments({ "myVideo": { "$size": 1 } })
+            const totalDocs = await Accounts.countDocuments({ "myVideo": { $ne: [] } })
 
             class Pagination {
                 constructor(page, limit, totalDocs) {
@@ -104,25 +104,22 @@ class Account {
                     this.totalPage = this.totalDocs / this.limit
                 }
                 getResult() {
-                    return Accounts.find({ "myVideo": { "$size": 1 } })
+                    Accounts.find({ "myVideo": { $ne: [] } })
                         .select("-password")
-                        .limit(this.limit)
-                        .skip(this.page * this.limit)
                         .populate({
-                            path: 'myVideo',
+                            path: "myVideo",
                             populate: {
                                 path: 'comment',
-                                populate: {
-                                    path: 'user'
-                                }
                             }
                         })
-                        .then(content => {
+                        .limit(this.limit)
+                        .skip(this.page * this.limit)
+                        .then(totalUser => {
                             res.status(200).json({
                                 page,
                                 totalPage: Math.ceil(this.totalPage),
                                 totalDocs,
-                                content
+                                totalUser
                             })
                         })
                         .catch(next)
@@ -315,7 +312,8 @@ class Account {
         await user.save()
 
         res.status(200).json({
-            statusMessage: 'Success'
+            statusMessage: 'Success',
+            user
         })
     }
 
