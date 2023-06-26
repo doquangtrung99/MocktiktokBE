@@ -185,7 +185,13 @@ class Account {
                     const { password, ...others } = hasUsername.toObject()
                     const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role)
                     const token = generateAccessToken(hasUsername._id, hasUsername.role, refreshToken)
-                    res.status(200).json({ ...others, token, status: 'success' })
+
+                    res.status(200).json({
+                        ...others, data: {
+                            token,
+                            user: hasUsername
+                        }, status: 'success'
+                    })
                 } else {
                     res.status(200).json({
                         message: 'invalid password'
