@@ -2,13 +2,21 @@ import Videos from '../model/Video.js'
 import Account from '../model/Account.js'
 class Video {
 
-    Get(req, res, next) {
+    async Get(req, res, next) {
+
+        const page = req.query.page
+        const limit = req.query.limit
+        const totalDocs = await Videos.countDocuments()
+        const totalPage = totalDocs / limit
+
         Videos.find()
-            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
+            .skip(page * limit)
+            .limit(limit)
+            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id follow' })
             .populate({
                 path: 'comment'
             })
-            .then(content => res.status(200).json(content))
+            .then(content => res.status(200).json({ video: content, totalPage }))
             .catch(next)
     }
 
@@ -34,7 +42,7 @@ class Video {
         const videoId = req.params.videoId
 
         Videos.findOne({ _id: videoId })
-            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id' })
+            .populate({ path: 'ownerVideo', select: 'nickname fullname avatarUrl _id follow' })
             .populate({
                 path: 'comment',
                 populate: {
