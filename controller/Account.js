@@ -92,43 +92,14 @@ class Account {
 
         if (req.params.id == 'all') {
 
-            const page = req.query.page
-            const limit = req.query.limit
-            const totalDocs = await Accounts.countDocuments({ "myVideo": { $ne: [] } })
+            Accounts.find()
+                .populate({ path: 'myVideo videoliked following follow' })
+                .then(totalUser => {
+                    res.status(200).json(totalUser)
+                })
+                .catch(next)
 
-            class Pagination {
-                constructor(page, limit, totalDocs) {
-                    this.page = page
-                    this.totalDocs = totalDocs
-                    this.limit = limit
-                    this.totalPage = this.totalDocs / this.limit
-                }
-                getResult() {
-                    Accounts.find({ "myVideo": { $ne: [] } })
-                        .select("-password")
-                        .populate({
-                            path: "myVideo",
-                            populate: {
-                                path: 'comment',
-                            }
-                        })
-                        .limit(this.limit)
-                        .skip(this.page * this.limit)
-                        .then(totalUser => {
-                            res.status(200).json({
-                                page,
-                                totalPage: Math.ceil(this.totalPage),
-                                totalDocs,
-                                totalUser
-                            })
-                        })
-                        .catch(next)
-                }
-            }
 
-            const pagination = new Pagination(page, limit, totalDocs)
-
-            await pagination.getResult()
         } else {
 
             Accounts.findById(req.params.id)
