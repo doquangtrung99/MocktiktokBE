@@ -35,7 +35,7 @@ const server = app.listen(3005, () => {
 
 const socketio = new Server(server, {
     cors: {
-        origin: '*',
+        origin: process.env.CLIENT_URL,
         credentials: true
     }
 });
