@@ -154,8 +154,8 @@ class Account {
                 const hasPassword = await bcrypt.compare(req.body.password, hasUsername.password)
                 if (hasPassword) {
                     const { password, ...others } = hasUsername.toObject()
-                    const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role)
-                    const token = generateAccessToken(hasUsername._id, hasUsername.role, refreshToken)
+                    const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role, hasUsername.nickname)
+                    const token = generateAccessToken(hasUsername._id, hasUsername.role, hasUsername.nickname, refreshToken)
 
                     res.status(200).json({
                         ...others, data: {
