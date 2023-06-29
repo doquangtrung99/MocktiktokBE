@@ -12,7 +12,7 @@ mongoose.set('strictQuery', false);
 const app = express();
 
 app.use(cors({
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
