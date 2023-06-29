@@ -69,6 +69,20 @@ class Video {
             statuscode: 'success'
         })
     }
+
+    async Update(req, res, next) {
+
+        const contentEdit = {
+            videoTitle: req.body.titleVideo,
+            videoHashtag: req.body.hashtagVideo
+        }
+
+        await Videos.updateOne({ _id: req.params.videoId }, { $set: contentEdit })
+        const video = await Videos.findById({ _id: req.params.videoId })
+
+        res.status(200).json(video)
+    }
+
 }
 
 export default new Video
