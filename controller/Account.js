@@ -106,20 +106,24 @@ class Account {
                 .select('-password')
                 .populate({
                     path: 'myVideo',
-                })
-                .populate({
-                    path: 'videoliked'
-                })
-                .populate({
-                    path: 'following', select: '_id fullname avatarUrl nickname myVideo',
                     populate: {
-                        path: 'myVideo'
-                    }
+                        path: 'comment',
+                    },
+                })
+                .populate({
+                    path: 'videoliked',
+                })
+                .populate({
+                    path: 'following',
+                    select: '_id fullname avatarUrl nickname myVideo',
+                    populate: {
+                        path: 'myVideo',
+                    },
                 })
                 .then(content => {
-                    res.status(200).json(content)
+                    res.status(200).json(content);
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.log(error));
         }
     }
 
@@ -136,7 +140,7 @@ class Account {
                 })
             }
 
-            const token = generateAccessToken(decoded.id, decoded.role, refreshToken)
+            const token = generateAccessToken(decoded.id, decoded.role, decoded.nickname, refreshToken)
             const user = await Accounts.findById(decoded.id).select('-password -__v -createdAt -updatedAt')
 
             return res.status(200).json({
@@ -154,7 +158,7 @@ class Account {
                 const hasPassword = await bcrypt.compare(req.body.password, hasUsername.password)
                 if (hasPassword) {
                     const { password, ...others } = hasUsername.toObject()
-                    const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role, hasUsername.nickname)
+                    const refreshToken = generateRefreshToken(hasUsername._id, hasUsername.role)
                     const token = generateAccessToken(hasUsername._id, hasUsername.role, hasUsername.nickname, refreshToken)
 
                     res.status(200).json({

@@ -7,8 +7,8 @@ export const generateAccessToken = (id, role, nickname, refreshToken) => {
     return token
 }
 
-export const generateRefreshToken = (id, role, nickname) => {
-    const token = jwt.sign({ id, role, nickname },
+export const generateRefreshToken = (id, role) => {
+    const token = jwt.sign({ id, role },
         process.env.JWT_REFRESH_SECRET, { expiresIn: '365d' })
     return token
 }
